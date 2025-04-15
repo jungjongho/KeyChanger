@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: keychanger-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+    
+    # 자동 배포 설정
+    autoDeploy: true
+    
+    # 헬스체크 경로 설정
+    healthCheckPath: /
+    
+    # CORS 허용 설정 (config.py에서도 설정 필요)
+    headers:
+      - path: /*
+        name: Access-Control-Allow-Origin
+        value: https://key-changer.vercel.app

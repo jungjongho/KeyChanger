@@ -20,4 +20,5 @@ CORS_ORIGINS = [
     "http://localhost:5173",  # Vite default port
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
+    "https://key-changer.vercel.app",  # 배포된 프론트엔드 도메인
 ]
