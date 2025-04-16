@@ -92,7 +92,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isLoading }) => {
               : '음악 파일을 드래그하거나 클릭하여 업로드하세요'}
           </p>
           
-          <p className="text-sm text-gray-500">MP3 또는 WAV 파일만 지원됩니다</p>
+          <p className="text-sm text-gray-500">MP3 또는 WAV 파일만 지원됩니다 (최대 10MB, 분석은 처음 30초만)</p>
           
           {isLoading && (
             <div className="mt-4">

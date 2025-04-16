@@ -2,7 +2,11 @@
 nixPkgs = ["python39", "ffmpeg-headless", "gcc"]
 
 [phases.install]
-cmds = ["python -m venv /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt"]
+cmds = ["python -m venv /opt/venv && . /opt/venv/bin/activate && pip install --no-cache-dir -r requirements.txt"]
 
 [start]
-cmd = "python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+cmd = "python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --timeout-keep-alive 120"
+
+[variables]
+PYTHON_ENABLE_OPTIMIZATIONS = "1"
+PYTHON_CONFIGURE_OPTS = "--with-lto"

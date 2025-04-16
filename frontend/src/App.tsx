@@ -42,16 +42,24 @@ const App: React.FC = () => {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 60000, // 60초 타임아웃 설정
       });
       
       setKeyResult(response.data);
     } catch (err) {
       let message = '키 분석에 실패했습니다. 다시 시도해주세요.';
       
-      if (axios.isAxiosError(err) && err.response) {
-        message = err.response.data.detail || message;
+      if (axios.isAxiosError(err)) {
+        if (err.code === 'ECONNABORTED') {
+          message = '요청 시간이 초과되었습니다. 파일 크기가 큽니다. 더 작은 파일을 업로드해주세요.';
+        } else if (err.response) {
+          message = err.response.data.detail || message;
+        } else if (err.request) {
+          message = '서버에 연결할 수 없습니다. 인터넷 연결을 확인하고 다시 시도해주세요.';
+        }
       }
       
+      console.error('Analyze error:', err);
       setError(message);
     } finally {
       setIsAnalyzing(false);
@@ -77,6 +85,7 @@ const App: React.FC = () => {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 120000, // 120초 타임아웃 설정
       });
       
       // 파일 다운로드 처리
@@ -97,20 +106,27 @@ const App: React.FC = () => {
     } catch (err) {
       let message = '파일 변환 중 문제가 발생했습니다.';
       
-      if (axios.isAxiosError(err) && err.response) {
-        const errorResponse = err.response.data;
-        
-        if (errorResponse instanceof Blob) {
-          const text = await errorResponse.text();
-          try {
-            const parsedError = JSON.parse(text);
-            message = parsedError.detail || message;
-          } catch {
-            // JSON 파싱 오류 시 기본 메시지 사용
+      if (axios.isAxiosError(err)) {
+        if (err.code === 'ECONNABORTED') {
+          message = '요청 시간이 초과되었습니다. 파일 크기가 큽니다. 더 작은 파일을 업로드해주세요.';
+        } else if (err.response) {
+          const errorResponse = err.response.data;
+          
+          if (errorResponse instanceof Blob) {
+            const text = await errorResponse.text();
+            try {
+              const parsedError = JSON.parse(text);
+              message = parsedError.detail || message;
+            } catch {
+              // JSON 파싱 오류 시 기본 메시지 사용
+            }
           }
+        } else if (err.request) {
+          message = '서버에 연결할 수 없습니다. 인터넷 연결을 확인하고 다시 시도해주세요.';
         }
       }
       
+      console.error('Transpose error:', err);
       setError(message);
     } finally {
       setIsTransposing(false);

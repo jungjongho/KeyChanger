@@ -1,5 +1,12 @@
 import os
 import traceback
+import logging
+
+# 로깅 설정
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,6 +28,10 @@ app = FastAPI(
     description="음악 파일의 키를 분석하고 전조하는 API",
     version="1.0.0"
 )
+
+# 요청 시간 제한 설정
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
 
 # CORS 설정
 app.add_middleware(
@@ -62,6 +73,8 @@ async def analyze_audio(
     file: UploadFile = File(...),
     background_tasks: BackgroundTasks = None
 ):
+    logging.info(f"Analyzing file: {file.filename} (size: {file.size if hasattr(file, 'size') else 'unknown'})")
+    logging.info(f"Content type: {file.content_type}")
     """
     음악 파일의 키(조성)를 분석합니다.
     

@@ -1,6 +1,7 @@
 import os
 import uuid
 import time
+import logging
 import librosa
 import numpy as np
 from pydub import AudioSegment
@@ -35,8 +36,20 @@ def analyze_key(file_path: str) -> Dict[str, Union[str, float]]:
         Dict: {"key": "E", "confidence": 0.82}
     """
     try:
-        # librosa를 사용하여 오디오 파일 로드
-        y, sr = librosa.load(file_path)
+        logging.info(f"Start analyzing key for file: {file_path}")
+        
+        # 파일 크기 체크 (10MB 제한)
+        file_size = os.path.getsize(file_path)
+        logging.info(f"File size: {file_size / (1024 * 1024):.2f} MB")
+        
+        if file_size > 10 * 1024 * 1024:  # 10MB
+            logging.warning(f"File too large: {file_size / (1024 * 1024):.2f} MB")
+            raise Exception("파일 크기가 너무 큽니다. 10MB 이하의 파일을 업로드해주세요.")
+        
+        logging.info("Loading audio file with librosa...")
+        # librosa를 사용하여 오디오 파일 로드 (30초로 제한)
+        y, sr = librosa.load(file_path, duration=30)  # 처음 30초만 분석
+        logging.info(f"Audio loaded with duration: {len(y)/sr:.2f} seconds, sr: {sr}Hz")
         
         # 크로마그램 특성 추출
         chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
@@ -75,8 +88,18 @@ def analyze_key(file_path: str) -> Dict[str, Union[str, float]]:
             "confidence": round(normalized_confidence, 2)
         }
     except Exception as e:
-        print(f"Key analysis failed: {str(e)}")
-        raise Exception("음악 키 분석에 실패했습니다.")
+        logging.error(f"Key analysis failed: {str(e)}")
+        logging.exception("Detailed error traceback:")
+        # 사용자 친화적인 오류 메시지
+        if "load" in str(e).lower():
+            raise Exception("오디오 파일을 로드하는 중 오류가 발생했습니다. 파일이 손상되었거나 형식이 다릅니다.")
+        elif "memory" in str(e).lower():
+            raise Exception("메모리 부족 오류가 발생했습니다. 더 작은 파일을 업로드해주세요.")
+        else:
+            raise Exception(f"음악 키 분석에 실패했습니다: {str(e)}")
+    except SystemExit:
+        logging.error("Process timed out or was terminated")
+        raise Exception("분석 시간이 너무 오래 걸렸습니다. 더 작은 파일을 업로드해주세요.")
 
 def transpose_audio(
     input_path: str, 
@@ -95,8 +118,20 @@ def transpose_audio(
         str: 변환된 파일의 경로
     """
     try:
-        # librosa를 사용하여 오디오 파일 로드
-        y, sr = librosa.load(input_path, sr=None)
+        logging.info(f"Start transposing file: {input_path}")
+        
+        # 파일 크기 체크 (10MB 제한)
+        file_size = os.path.getsize(input_path)
+        logging.info(f"File size: {file_size / (1024 * 1024):.2f} MB")
+        
+        if file_size > 10 * 1024 * 1024:  # 10MB
+            logging.warning(f"File too large: {file_size / (1024 * 1024):.2f} MB")
+            raise Exception("파일 크기가 너무 큽니다. 10MB 이하의 파일을 업로드해주세요.")
+        
+        logging.info(f"Loading audio file for transposition (shift: {semitones} semitones)...")
+        # librosa를 사용하여 오디오 파일 로드 (최대 3분으로 제한)
+        y, sr = librosa.load(input_path, sr=None, duration=180)  # 최대 3분
+        logging.info(f"Audio loaded with duration: {len(y)/sr:.2f} seconds, sr: {sr}Hz")
         
         # 템포를 유지하면서 피치만 변경하는 librosa의 피치 쉬프트 함수 사용
         y_shifted = librosa.effects.pitch_shift(y=y, sr=sr, n_steps=semitones)
@@ -124,8 +159,20 @@ def transpose_audio(
         
         return output_path
     except Exception as e:
-        print(f"Transposition failed: {str(e)}")
-        raise Exception(f"오디오 전조 중 오류가 발생했습니다: {str(e)}")
+        logging.error(f"Transposition failed: {str(e)}")
+        logging.exception("Detailed error traceback:")
+        # 사용자 친화적인 오류 메시지
+        if "load" in str(e).lower():
+            raise Exception("오디오 파일을 로드하는 중 오류가 발생했습니다. 파일이 손상되었거나 형식이 다릅니다.")
+        elif "memory" in str(e).lower():
+            raise Exception("메모리 부족 오류가 발생했습니다. 더 작은 파일을 업로드해주세요.")
+        elif "pitch_shift" in str(e).lower():
+            raise Exception("전조 처리 중 오류가 발생했습니다. 다른 파일을 업로드해주세요.")
+        else:
+            raise Exception(f"오디오 전조 중 오류가 발생했습니다: {str(e)}")
+    except SystemExit:
+        logging.error("Process timed out or was terminated")
+        raise Exception("전조 시간이 너무 오래 걸렸습니다. 더 작은 파일을 업로드해주세요.")
 
 def clean_old_files(retention_minutes: int = 10) -> None:
     """
