@@ -4,8 +4,8 @@ import FileUpload from './components/FileUpload';
 import KeyAnalysisResult from './components/KeyAnalysisResult';
 import TransposeForm from './components/TransposeForm';
 
-// API 기본 URL - 환경변수 사용 (기본값은 로컬호스트)
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+// API 기본 URL - 배포된 백엔드 주소 사용
+const API_BASE_URL = 'https://keychanger.onrender.com';
 
 interface KeyResult {
   key: string;
