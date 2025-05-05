@@ -5,7 +5,8 @@ import KeyAnalysisResult from './components/KeyAnalysisResult';
 import TransposeForm from './components/TransposeForm';
 
 // API 기본 URL - 배포된 백엔드 주소 사용
-const API_BASE_URL = 'https://keychanger.onrender.com';
+// const API_BASE_URL = 'https://keychanger.onrender.com';
+const API_BASE_URL = 'http://localhost:8000';
 
 interface KeyResult {
   key: string;

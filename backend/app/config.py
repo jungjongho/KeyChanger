@@ -11,6 +11,9 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 # File retention time in minutes
 FILE_RETENTION_MINUTES = 10
 
+# Maximum file size in MB (변경 가능)
+MAX_FILE_SIZE = 50  # 50MB로 변경
+
 # Allowed audio formats
 ALLOWED_EXTENSIONS = {"mp3", "wav"}
 

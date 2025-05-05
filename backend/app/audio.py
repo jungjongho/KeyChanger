@@ -7,7 +7,7 @@ import numpy as np
 from pydub import AudioSegment
 from typing import Dict, Tuple, Optional, Union
 
-from .config import TEMP_DIR, ALLOWED_EXTENSIONS
+from .config import TEMP_DIR, ALLOWED_EXTENSIONS, MAX_FILE_SIZE
 
 # 키 분석용 상수
 PITCHES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
@@ -38,13 +38,13 @@ def analyze_key(file_path: str) -> Dict[str, Union[str, float]]:
     try:
         logging.info(f"Start analyzing key for file: {file_path}")
         
-        # 파일 크기 체크 (10MB 제한)
+        # 파일 크기 체크 (CONFIG에서 설정한 제한)
         file_size = os.path.getsize(file_path)
         logging.info(f"File size: {file_size / (1024 * 1024):.2f} MB")
         
-        if file_size > 10 * 1024 * 1024:  # 10MB
+        if file_size > MAX_FILE_SIZE * 1024 * 1024:  # MAX_FILE_SIZE MB
             logging.warning(f"File too large: {file_size / (1024 * 1024):.2f} MB")
-            raise Exception("파일 크기가 너무 큽니다. 10MB 이하의 파일을 업로드해주세요.")
+            raise Exception(f"파일 크기가 너무 큽니다. {MAX_FILE_SIZE}MB 이하의 파일을 업로드해주세요.")
         
         logging.info("Loading audio file with librosa...")
         # librosa를 사용하여 오디오 파일 로드 (30초로 제한)
@@ -120,17 +120,17 @@ def transpose_audio(
     try:
         logging.info(f"Start transposing file: {input_path}")
         
-        # 파일 크기 체크 (10MB 제한)
+        # 파일 크기 체크 (CONFIG에서 설정한 제한)
         file_size = os.path.getsize(input_path)
         logging.info(f"File size: {file_size / (1024 * 1024):.2f} MB")
         
-        if file_size > 10 * 1024 * 1024:  # 10MB
+        if file_size > MAX_FILE_SIZE * 1024 * 1024:  # MAX_FILE_SIZE MB
             logging.warning(f"File too large: {file_size / (1024 * 1024):.2f} MB")
-            raise Exception("파일 크기가 너무 큽니다. 10MB 이하의 파일을 업로드해주세요.")
+            raise Exception(f"파일 크기가 너무 큽니다. {MAX_FILE_SIZE}MB 이하의 파일을 업로드해주세요.")
         
         logging.info(f"Loading audio file for transposition (shift: {semitones} semitones)...")
         # librosa를 사용하여 오디오 파일 로드 (최대 3분으로 제한)
-        y, sr = librosa.load(input_path, sr=None, duration=180)  # 최대 3분
+        y, sr = librosa.load(input_path, sr=None, duration=300)  # 최대 5분
         logging.info(f"Audio loaded with duration: {len(y)/sr:.2f} seconds, sr: {sr}Hz")
         
         # 템포를 유지하면서 피치만 변경하는 librosa의 피치 쉬프트 함수 사용
