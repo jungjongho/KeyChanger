@@ -3,8 +3,8 @@
 # 이 스크립트는 AWS EC2 인스턴스에서 실행해야 합니다.
 
 # 도메인 설정 (실제 도메인으로 변경하세요)
-DOMAIN="keychanger.example.com"
-EMAIL="your-email@example.com"  # 인증서 만료 알림을 받을 이메일
+DOMAIN="keychanger.n-e.kr"
+EMAIL="cas1234kr@naver.com"  # 인증서 만료 알림을 받을 이메일
 
 # 필요한 패키지 설치
 sudo apt-get update

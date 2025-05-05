@@ -35,6 +35,6 @@ CORS_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
     "https://key-changer.vercel.app",  # 배포된 프론트엔드 도메인
-    "https://keychanger.example.com",  # 배포될 도메인 (변경 필요)
-    "https://www.keychanger.example.com",  # www 서브도메인 (변경 필요)
+    "http://keychanger.n-e.kr",  # 배포될 도메인 (변경 필요)
+    "https://keychanger.n-e.kr",  # www 서브도메인 (변경 필요)
 ]
