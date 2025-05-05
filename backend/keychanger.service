@@ -7,7 +7,7 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/home/ubuntu/KeyChanger/backend
 Environment="PATH=/home/ubuntu/KeyChanger/backend/venv/bin"
-Environment="PORT=443"
+Environment="PORT=8000"
 ExecStart=/home/ubuntu/KeyChanger/backend/start.sh
 Restart=always
 RestartSec=5

@@ -2,7 +2,7 @@
 set -e
 
 # 가상환경 활성화
-source /opt/venv/bin/activate
+source venv/bin/activate
 
 # 포트 설정 (일반적으로 Nginx 프록시를 사용하는 경우 8000 포트 사용)
 PORT=${PORT:-8000}

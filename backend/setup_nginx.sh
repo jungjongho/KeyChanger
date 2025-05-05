@@ -2,7 +2,7 @@
 # Nginx 설치 및 설정 스크립트
 
 # 도메인 설정 (실제 도메인으로 변경하세요)
-DOMAIN="keychanger.example.com"
+DOMAIN="keychanger.n-e.kr"
 
 # Nginx 설치
 sudo apt update
@@ -12,7 +12,7 @@ sudo apt install -y nginx
 sudo cp nginx_keychanger.conf /etc/nginx/sites-available/keychanger.conf
 
 # 설정 파일에서 도메인 이름 업데이트
-sudo sed -i "s/keychanger\.example\.com/$DOMAIN/g" /etc/nginx/sites-available/keychanger.conf
+sudo sed -i "s/keychanger\.n-e\.kr/$DOMAIN/g" /etc/nginx/sites-available/keychanger.conf
 
 # 설정 파일 활성화
 sudo ln -sf /etc/nginx/sites-available/keychanger.conf /etc/nginx/sites-enabled/
