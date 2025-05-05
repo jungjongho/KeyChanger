@@ -1,0 +1,17 @@
+[Unit]
+Description=KeyChanger API Service
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/KeyChanger/backend
+Environment="PATH=/home/ubuntu/KeyChanger/backend/venv/bin"
+Environment="PORT=443"
+ExecStart=/home/ubuntu/KeyChanger/backend/start.sh
+Restart=always
+RestartSec=5
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target
