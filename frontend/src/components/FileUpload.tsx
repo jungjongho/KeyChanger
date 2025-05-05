@@ -42,7 +42,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isLoading }) => {
     const fileType = file.type;
     
     if (!validTypes.includes(fileType)) {
-      alert('지원하지 않는 파일 형식입니다. mp3 또는 wav 파일만 허용됩니다.(최대 5분 )');
+      alert('지원하지 않는 파일 형식입니다. mp3 또는 wav 파일만 허용됩니다.(최대 5분)');
       return;
     }
     
