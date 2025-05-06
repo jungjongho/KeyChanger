@@ -1,7 +1,6 @@
 import os
 import traceback
 import logging
-import ssl
 
 # 로깅 설정
 logging.basicConfig(
@@ -14,8 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 from typing import Optional
 
-from .config import (TEMP_DIR, ALLOWED_EXTENSIONS, CORS_ORIGINS, FILE_RETENTION_MINUTES,
-                   SSL_CERTFILE, SSL_KEYFILE, SERVER_HOST, SERVER_PORT)
+from .config import TEMP_DIR, ALLOWED_EXTENSIONS, CORS_ORIGINS, FILE_RETENTION_MINUTES
 from .audio import (
     is_allowed_file, 
     generate_temp_filepath, 
@@ -185,15 +183,7 @@ async def transpose_audio_file(
 
 if __name__ == "__main__":
     import uvicorn
-    import os
     
-    # SSL 인증서 파일 확인
-    ssl_context = None
-    if os.path.exists(SSL_CERTFILE) and os.path.exists(SSL_KEYFILE):
-        ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        ssl_context.load_cert_chain(SSL_CERTFILE, SSL_KEYFILE)
-        print(f"HTTPS 서버 실행: {SERVER_HOST}:{SERVER_PORT}")
-        uvicorn.run("app.main:app", host=SERVER_HOST, port=SERVER_PORT, ssl_certfile=SSL_CERTFILE, ssl_keyfile=SSL_KEYFILE)
-    else:
-        print("경고: SSL 인증서 파일이 없습니다. HTTP로 실행합니다.")
-        uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    # 개발 서버 실행
+    print("HTTP 서버 실행: 0.0.0.0:8000")
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
